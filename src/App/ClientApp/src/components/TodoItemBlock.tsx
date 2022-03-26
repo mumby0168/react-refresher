@@ -2,10 +2,11 @@ import {TodoItem} from '../models/lists';
 
 export interface ITodoItemBlockProps {
     item: TodoItem;
+    onComplete: (ti: TodoItem) => void;
 }
 
 
-export function ITodoItemBlock({item}: ITodoItemBlockProps) {
+export function ITodoItemBlock({item, onComplete}: ITodoItemBlockProps) {
 
     const getDateTooltipText = () => {
         if (item.completedAt) {
@@ -20,7 +21,7 @@ export function ITodoItemBlock({item}: ITodoItemBlockProps) {
             return (<div/>);
         }
         return (
-            <button className="button is-primary is-small">Complete</button>
+            <button onClick={() => onComplete(item)} className="button is-primary is-small">Complete</button>
         );
     };
 

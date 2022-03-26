@@ -49,7 +49,7 @@ export function ListsPage() {
 
     return (
         <ProtectedPage>
-            <div className="container is-fluid">
+            <div className="container has-mobile-padding">
                 <div className="pt-5">
                     <ListForm onListCreated={() => loadLists()}/>
                 </div>
@@ -59,7 +59,9 @@ export function ListsPage() {
                 </div>
                 <hr/>
                 <ListsTabs onTabSelected={handleTitleChanged} summaries={summaries}/>
-                <TodoItemsPanel listName={title}/>
+                <TodoItemsPanel
+                    onLoading={(isLoading => setLoading(isLoading))}
+                    listName={title}/>
             </div>
         </ProtectedPage>
     );

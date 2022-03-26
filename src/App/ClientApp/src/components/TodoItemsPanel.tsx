@@ -4,6 +4,7 @@ import {ITodoItemBlock} from './TodoItemBlock';
 
 export interface ITodoItemsPanelProps {
     listName: string;
+    onLoading: (isLoading: boolean) => void;
 }
 
 enum FilterMode {
@@ -36,6 +37,9 @@ export function TodoItemsPanel({listName}: ITodoItemsPanelProps) {
     const [todoItems, setTodoItems] = useState<TodoItem[]>(init);
     const [filter, setFilter] = useState(FilterMode.Outstanding);
 
+    //TODO: add a use effect here, with [listName] as a trigger for change.
+    //TODO: call API via re-usable method.
+
     const getFilteredTodos = () => {
         switch (filter) {
             case FilterMode.Outstanding:
@@ -45,6 +49,11 @@ export function TodoItemsPanel({listName}: ITodoItemsPanelProps) {
             case FilterMode.All:
                 return todoItems;
         }
+    };
+
+    const completeTodo = (item: TodoItem) => {
+        //TODO: call API to complete, re-load items
+        console.log('calling api .....');
     };
 
     const todoBlocks = () => {
@@ -59,7 +68,7 @@ export function TodoItemsPanel({listName}: ITodoItemsPanelProps) {
         }
 
         return todos.map(ti =>
-            <ITodoItemBlock item={ti}/>);
+            <ITodoItemBlock item={ti} onComplete={completeTodo}/>);
     };
 
     return (
