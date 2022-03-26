@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {fetchListSummaries} from '../api/apiFuncs';
 import {ListsTabs} from '../components/ListsTabs';
 import {ListSummary} from '../models/lists';
+import {ListForm} from "../components/ListForm";
 
 const initSummaries: ListSummary[] = [];
 
@@ -47,6 +48,8 @@ export function ListsPage() {
                     <p className="subtitle">
                         Your lists are presented below.
                     </p>
+                    <ListForm onListCreated={() => {
+                    }}/>
                 </div>
             </section>
             {loadingIndicator}
