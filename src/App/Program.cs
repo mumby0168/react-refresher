@@ -1,3 +1,5 @@
+using App.DTOs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,10 +19,14 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.MapGet("/api/lists", GetLists);
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
+async ValueTask<IEnumerable<ListSummaryDto>> GetLists()
+{
+    await Task.Delay(5000);
+    return Enumerable.Range(0, 5).Select(i =>
+        new ListSummaryDto($"List {i}", DateTime.UtcNow));
+}
 
 app.MapFallbackToFile("index.html");;
 

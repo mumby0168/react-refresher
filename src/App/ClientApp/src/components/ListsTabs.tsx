@@ -1,6 +1,5 @@
-
-import { useState } from 'react';
-import { ListSummary } from '../models/lists';
+import {useEffect, useState} from 'react';
+import {ListSummary} from '../models/lists';
 
 export interface IListsTabsProps {
     summaries: ListSummary[]
@@ -11,11 +10,16 @@ export function ListsTabs(props: IListsTabsProps) {
 
     const [activeTab, setActiveTab] = useState<ListSummary | null>()
 
-    const getActiveClassName = (ls: ListSummary): string => 
+    const getActiveClassName = (ls: ListSummary): string =>
         activeTab && ls.name == activeTab.name
-        ? 'is-active'
-        : ''
-            
+            ? 'is-active'
+            : ''
+
+
+    if (props.summaries.length > 0 && !activeTab) {
+        setActiveTab(props.summaries[0])
+    }
+
     const setChosenTab = (ls: ListSummary) => {
         props.onTabSelected(ls);
         setActiveTab(ls);
@@ -29,7 +33,7 @@ export function ListsTabs(props: IListsTabsProps) {
         </li>)
 
     return (
-        <div className='tabs is-centered'>
+        <div className='tabs is-toggle'>
             <ul>
                 {tabs}
             </ul>
