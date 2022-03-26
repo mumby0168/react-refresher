@@ -1,0 +1,3 @@
+.is-animated-display {
+    transition: visibility 0s, opacity 2s linear;
+}

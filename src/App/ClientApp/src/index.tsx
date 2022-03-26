@@ -1,11 +1,13 @@
-import 'bulma/css/bulma.min.css'
+import 'bulma/css/bulma.min.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
 import ReactDOM from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
-import {MsalProvider} from "@azure/msal-react";
-import {msalInstance} from "./auth/msal";
+import {MsalProvider} from '@azure/msal-react';
+import {msalInstance} from './auth/msal';
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href') as string;
 const rootElement = document.getElementById('root');
