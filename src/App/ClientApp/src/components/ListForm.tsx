@@ -24,8 +24,8 @@ export function ListForm(props: IListsFormProps) {
                             props.onListCreated();
                             setName('');
                         }
-                    })
-            })
+                    });
+            });
     }
 
     return (

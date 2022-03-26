@@ -4,9 +4,9 @@ namespace App.Data;
 
 public class TodoList : FullItem
 {
-    public TodoList(string name)
+    public TodoList(string name, string email)
     {
-        Pk = nameof(TodoList);
+        Pk = $"{email}_{nameof(TodoList)}";
         Id = name;
     }
 

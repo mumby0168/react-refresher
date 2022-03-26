@@ -1,5 +1,6 @@
 using App.Data;
 using App.DTOs;
+using App.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.CosmosRepository;
@@ -17,6 +18,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddCosmosRepository(x =>
 {
     x.DatabaseId = "react-todo-db";
+    x.ContainerPerItemType = true;
     x.ContainerBuilder
         .Configure<TodoList>(optionsBuilder =>
             optionsBuilder
@@ -46,21 +48,28 @@ app.MapGet("/api/lists", GetLists)
 app.MapPost("/api/lists", CreateList)
     .RequireAuthorization();
 
-async ValueTask<IEnumerable<ListSummaryDto>> GetLists(IReadOnlyRepository<TodoList> repository, HttpContext httpContext)
+async ValueTask<IEnumerable<ListSummaryDto>> GetLists(
+    HttpContext context,
+    IReadOnlyRepository<TodoList> repository)
 {
-    var lists = await repository.GetAsync(x => x.Pk == nameof(TodoList));
+    var lists = await repository.GetTodoListsAsync(
+        context.GetEmailAddress());
+
     return lists.Select(x =>
         new ListSummaryDto(x.Id, x.CreatedTimeUtc!.Value));
 }
 
-async ValueTask<IResult> CreateList([FromQuery] string name, IWriteOnlyRepository<TodoList> repository)
+async ValueTask<IResult> CreateList(
+    HttpContext context,
+    [FromQuery] string name,
+    IWriteOnlyRepository<TodoList> repository)
 {
     if (string.IsNullOrWhiteSpace(name))
     {
         return Results.BadRequest(new {error = "A name must be provided"});
     }
 
-    var list = new TodoList(name);
+    var list = new TodoList(name, context.GetEmailAddress());
     await repository.CreateAsync(list);
     return Results.Ok();
 }
