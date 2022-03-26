@@ -1,9 +1,9 @@
-import {PublicClientApplication, SilentRequest} from "@azure/msal-browser";
+import {Configuration, PublicClientApplication, SilentRequest} from "@azure/msal-browser";
 import {IMsalContext} from "@azure/msal-react";
 
-const msalConfig = {
+const msalConfig: Configuration = {
     auth: {
-        clientId: "94c638dd-2ff0-468b-89f5-edf84735241c",
+        clientId: "f017ce62-d773-4f13-849c-37139ba9055a",
         authority: "https://login.microsoftonline.com/16e04e4f-42c3-445b-9884-605e3bacbeee",
         redirectUri: "https://localhost:44489/",
     },
@@ -27,7 +27,22 @@ export const msalInstance = new PublicClientApplication(msalConfig);
 export function getAuthToken({instance, accounts}: IMsalContext) {
     const request: SilentRequest = {
         ...loginRequest,
-        account: accounts[0]
+        account: accounts[0],
+    };
+
+    return instance.acquireTokenSilent(request).then((response) => {
+        return response.accessToken;
+    }).catch((e) => {
+        instance.acquireTokenPopup(request).then((response) => {
+            return response.accessToken;
+        });
+    });
+}
+
+export function getAPIAuthToken({instance, accounts}: IMsalContext) {
+    const request: SilentRequest = {
+        scopes: ['api://bc65b5b2-ded0-4a95-9753-b4dcd295e880/Api.Access'],
+        account: accounts[0],
     };
 
     return instance.acquireTokenSilent(request).then((response) => {

@@ -4,7 +4,7 @@ import {ListsTabs} from '../components/ListsTabs';
 import {ListSummary} from '../models/lists';
 import {ListForm} from "../components/ListForm";
 import {ProtectedPage} from "../components/ProtectedPage";
-import {getAuthToken} from "../auth/msal";
+import {getAPIAuthToken} from "../auth/msal";
 import {useMsal} from "@azure/msal-react";
 
 const initSummaries: ListSummary[] = [];
@@ -22,7 +22,7 @@ export function ListsPage() {
 
     useEffect(() => {
         setLoading(true);
-        getAuthToken(context).then((t: any) => {
+        getAPIAuthToken(context).then((t: any) => {
             fetchListSummaries(t).then(r => {
                 if (r.data) {
                     const title = r.data.length > 0

@@ -1,10 +1,17 @@
 using App.Data;
 using App.DTOs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Azure.CosmosRepository;
+using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddCosmosRepository(x =>
@@ -30,10 +37,13 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGet("/api/lists", GetLists);
 
-async ValueTask<IEnumerable<ListSummaryDto>> GetLists(IReadOnlyRepository<TodoList> repository)
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+async ValueTask<IEnumerable<ListSummaryDto>> GetLists(IReadOnlyRepository<TodoList> repository, HttpContext httpContext)
 {
     var lists = await repository.GetAsync(x => x.Pk == nameof(TodoList));
     return lists.Select(x =>
@@ -41,6 +51,5 @@ async ValueTask<IEnumerable<ListSummaryDto>> GetLists(IReadOnlyRepository<TodoLi
 }
 
 app.MapFallbackToFile("index.html");
-;
 
 app.Run();

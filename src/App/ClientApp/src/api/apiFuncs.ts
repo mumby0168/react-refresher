@@ -12,6 +12,7 @@ export const fetchListSummaries = async (token: string): Promise<ListSummaryResu
 
     const get = async (): Promise<ListSummaryResult> => {
 
+        console.log(token);
         const re = await axios.get<ListSummary[]>('api/lists', {
             headers: {
                 'Authorization': `Bearer ${token}`
