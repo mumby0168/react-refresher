@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react';
 import {fetchListSummaries} from '../api/apiFuncs';
 import {ListsTabs} from '../components/ListsTabs';
 import {ListSummary} from '../models/lists';
-import {Simulate} from "react-dom/test-utils";
 
 const initSummaries: ListSummary[] = [];
 

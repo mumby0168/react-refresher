@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {ListSummary} from '../models/lists';
 
 export interface IListsTabsProps {
@@ -11,7 +11,7 @@ export function ListsTabs(props: IListsTabsProps) {
     const [activeTab, setActiveTab] = useState<ListSummary | null>()
 
     const getActiveClassName = (ls: ListSummary): string =>
-        activeTab && ls.name == activeTab.name
+        activeTab && ls.name === activeTab.name
             ? 'is-active'
             : ''
 
