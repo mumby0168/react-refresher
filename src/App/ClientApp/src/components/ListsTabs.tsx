@@ -26,7 +26,7 @@ export function ListsTabs(props: IListsTabsProps) {
     }
 
     const tabs = props.summaries.map((ls) =>
-        <li className={getActiveClassName(ls)}>
+        <li key={ls.name} className={getActiveClassName(ls)}>
             <a onClick={() => setChosenTab(ls)}>
                 {ls.name}
             </a>

@@ -1,7 +1,7 @@
 using App.Data;
 using App.DTOs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.CosmosRepository;
 using Microsoft.Identity.Web;
 
@@ -40,14 +40,29 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/api/lists", GetLists);
+app.MapGet("/api/lists", GetLists)
+    .RequireAuthorization();
 
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+app.MapPost("/api/lists", CreateList)
+    .RequireAuthorization();
+
 async ValueTask<IEnumerable<ListSummaryDto>> GetLists(IReadOnlyRepository<TodoList> repository, HttpContext httpContext)
 {
     var lists = await repository.GetAsync(x => x.Pk == nameof(TodoList));
     return lists.Select(x =>
         new ListSummaryDto(x.Id, x.CreatedTimeUtc!.Value));
+}
+
+async ValueTask<IResult> CreateList([FromQuery] string name, IWriteOnlyRepository<TodoList> repository)
+{
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        return Results.BadRequest(new {error = "A name must be provided"});
+    }
+
+    var list = new TodoList(name);
+    await repository.CreateAsync(list);
+    return Results.Ok();
 }
 
 app.MapFallbackToFile("index.html");

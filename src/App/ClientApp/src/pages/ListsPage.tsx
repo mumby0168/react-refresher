@@ -20,7 +20,7 @@ export function ListsPage() {
         setTitle(ls.name)
     }
 
-    useEffect(() => {
+    const loadLists = () => {
         setLoading(true);
         getAPIAuthToken(context).then((t: any) => {
             fetchListSummaries(t).then(r => {
@@ -34,7 +34,11 @@ export function ListsPage() {
                 setLoading(false);
             })
         })
-    }, [setSummaries, setLoading])
+    }
+
+    useEffect(() => {
+        loadLists();
+    }, [])
 
     const loadingIndicator = loading
         ? <div className='py-2'>
@@ -55,8 +59,7 @@ export function ListsPage() {
                         <p className="subtitle">
                             Your lists are presented below.
                         </p>
-                        <ListForm onListCreated={() => {
-                        }}/>
+                        <ListForm onListCreated={() => loadLists()}/>
                     </div>
                 </section>
                 {loadingIndicator}
