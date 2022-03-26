@@ -3,6 +3,7 @@ import {fetchListSummaries} from '../api/apiFuncs';
 import {ListsTabs} from '../components/ListsTabs';
 import {ListSummary} from '../models/lists';
 import {ListForm} from "../components/ListForm";
+import {ProtectedPage} from "../components/ProtectedPage";
 
 const initSummaries: ListSummary[] = [];
 
@@ -39,22 +40,24 @@ export function ListsPage() {
 
 
     return (
-        <div className='container is-fluid'>
-            <section className="hero">
-                <div className="hero-body pl-0">
-                    <p className="title">
-                        Lists
-                    </p>
-                    <p className="subtitle">
-                        Your lists are presented below.
-                    </p>
-                    <ListForm onListCreated={() => {
-                    }}/>
-                </div>
-            </section>
-            {loadingIndicator}
-            <ListsTabs onTabSelected={handleTitleChanged} summaries={summaries}/>
-            <div>{title}</div>
-        </div>
+        <ProtectedPage>
+            <div className='container is-fluid'>
+                <section className="hero">
+                    <div className="hero-body pl-0">
+                        <p className="title">
+                            Lists
+                        </p>
+                        <p className="subtitle">
+                            Your lists are presented below.
+                        </p>
+                        <ListForm onListCreated={() => {
+                        }}/>
+                    </div>
+                </section>
+                {loadingIndicator}
+                <ListsTabs onTabSelected={handleTitleChanged} summaries={summaries}/>
+                <div>{title}</div>
+            </div>
+        </ProtectedPage>
     );
 }

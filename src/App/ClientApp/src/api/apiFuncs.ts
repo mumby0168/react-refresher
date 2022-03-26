@@ -1,5 +1,5 @@
 import axios from "axios"
-import { ListSummary } from "../models/lists"
+import {ListSummary} from "../models/lists"
 
 export interface ApiResult<T> {
     data?: T
@@ -9,21 +9,22 @@ export interface ApiResult<T> {
 export interface ListSummaryResult extends ApiResult<ListSummary[]> { }
 
 export const fetchListSummaries = async (): Promise<ListSummaryResult> => {
+
+    const get = async (): Promise<ListSummaryResult> => {
+
+        const re = await axios.get<ListSummary[]>('api/lists')
+
+        return {
+            data: re.data
+        }
+    }
+
     try {
-        return await fetchListSummariesFromApi();
+        return await get();
     } catch (error) {
         return {
             error: 'failed to get lists'
         }
     }
-
 }
 
-const fetchListSummariesFromApi = async (): Promise<ListSummaryResult> => {
-
-    const re = await axios.get<ListSummary[]>('api/lists')
-
-    return {
-        data: re.data
-    }
-}
