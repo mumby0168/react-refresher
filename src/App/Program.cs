@@ -24,6 +24,11 @@ builder.Services.AddCosmosRepository(x =>
             optionsBuilder
                 .WithContainer("todos")
                 .WithPartitionKey("/pk")
+                .WithServerlessThroughput())
+        .Configure<TodoItem>(optionsBuilder =>
+            optionsBuilder
+                .WithContainer("todos")
+                .WithPartitionKey("/pk")
                 .WithServerlessThroughput());
 });
 
