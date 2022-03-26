@@ -4,6 +4,8 @@ import {ListsTabs} from '../components/ListsTabs';
 import {ListSummary} from '../models/lists';
 import {ListForm} from "../components/ListForm";
 import {ProtectedPage} from "../components/ProtectedPage";
+import {getAuthToken} from "../auth/msal";
+import {useMsal} from "@azure/msal-react";
 
 const initSummaries: ListSummary[] = [];
 
@@ -12,6 +14,7 @@ export function ListsPage() {
     const [summaries, setSummaries] = useState(initSummaries);
     const [title, setTitle] = useState('')
     const [loading, setLoading] = useState(false)
+    const context = useMsal();
 
     const handleTitleChanged = (ls: ListSummary) => {
         setTitle(ls.name)
@@ -19,15 +22,17 @@ export function ListsPage() {
 
     useEffect(() => {
         setLoading(true);
-        fetchListSummaries().then(r => {
-            if (r.data) {
-                const title = r.data.length > 0
-                    ? r.data[0].name
-                    : 'No lists'
-                setTitle(title);
-                setSummaries(r.data);
-            }
-            setLoading(false);
+        getAuthToken(context).then((t: any) => {
+            fetchListSummaries(t).then(r => {
+                if (r.data) {
+                    const title = r.data.length > 0
+                        ? r.data[0].name
+                        : 'No lists'
+                    setTitle(title);
+                    setSummaries(r.data);
+                }
+                setLoading(false);
+            })
         })
     }, [setSummaries, setLoading])
 

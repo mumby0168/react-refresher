@@ -20,9 +20,6 @@ builder.Services.AddCosmosRepository(x =>
 
 var app = builder.Build();
 
-var listsRepo = app.Services.GetRequiredService<IWriteOnlyRepository<TodoList>>();
-await listsRepo.CreateAsync(new TodoList($"List {DateTime.UtcNow.Millisecond}"));
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

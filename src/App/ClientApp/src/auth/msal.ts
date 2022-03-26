@@ -1,4 +1,5 @@
-import {PublicClientApplication} from "@azure/msal-browser";
+import {PublicClientApplication, SilentRequest} from "@azure/msal-browser";
+import {IMsalContext} from "@azure/msal-react";
 
 const msalConfig = {
     auth: {
@@ -22,3 +23,18 @@ export const graphConfig = {
 };
 
 export const msalInstance = new PublicClientApplication(msalConfig);
+
+export function getAuthToken({instance, accounts}: IMsalContext) {
+    const request: SilentRequest = {
+        ...loginRequest,
+        account: accounts[0]
+    };
+
+    return instance.acquireTokenSilent(request).then((response) => {
+        return response.accessToken;
+    }).catch((e) => {
+        instance.acquireTokenPopup(request).then((response) => {
+            return response.accessToken;
+        });
+    });
+}

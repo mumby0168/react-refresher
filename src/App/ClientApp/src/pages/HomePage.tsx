@@ -1,13 +1,12 @@
-import {loginRequest} from "../auth/msal";
-import {IPublicClientApplication, SilentRequest} from "@azure/msal-browser";
+import {getAuthToken, loginRequest} from "../auth/msal";
+import {IPublicClientApplication} from "@azure/msal-browser";
 import {useIsAuthenticated, useMsal} from "@azure/msal-react";
 import {callMsGraph} from "../api/graph";
 import {useState} from "react";
 
 export function HomePage() {
-
     const isAuthed = useIsAuthenticated();
-    const {instance, accounts} = useMsal();
+    const context = useMsal();
     const [graphData, setGraphData] = useState<any>(null);
 
     const handleLogin = (instance: IPublicClientApplication) => {
@@ -22,25 +21,12 @@ export function HomePage() {
         });
     }
 
-    const requestProfileData = () => {
-        const request: SilentRequest = {
-            ...loginRequest,
-            account: accounts[0],
-            redirectUri: `${window.location.href}/blank.html`
-        };
-
-        // Silently acquires an access token which is then attached to a request for Microsoft Graph data
-        instance.acquireTokenSilent(request).then((response) => {
-            callMsGraph(response.accessToken).then(response => setGraphData(response));
-        }).catch((e) => {
-            instance.acquireTokenPopup(request).then((response) => {
-                callMsGraph(response.accessToken).then(response => setGraphData(response));
-            });
-        });
-    }
 
     if (isAuthed && !graphData) {
-        requestProfileData();
+        getAuthToken(context)
+            .then((token: any) => {
+                callMsGraph(token).then(response => setGraphData(response));
+            })
     }
 
     const welcomeMessage = graphData != null
@@ -50,9 +36,9 @@ export function HomePage() {
     const loginOrLogout = isAuthed
         ? <div>
             {welcomeMessage}
-            <button onClick={() => handleLogout(instance)} className='button is-light mt-2'>Logout</button>
+            <button onClick={() => handleLogout(context.instance)} className='button is-light mt-2'>Logout</button>
         </div>
-        : <button onClick={() => handleLogin(instance)} className='button is-light'>Login</button>
+        : <button onClick={() => handleLogin(context.instance)} className='button is-light'>Login</button>
 
     console.log(graphData)
 

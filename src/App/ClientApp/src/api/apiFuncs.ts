@@ -8,11 +8,15 @@ export interface ApiResult<T> {
 
 export interface ListSummaryResult extends ApiResult<ListSummary[]> { }
 
-export const fetchListSummaries = async (): Promise<ListSummaryResult> => {
+export const fetchListSummaries = async (token: string): Promise<ListSummaryResult> => {
 
     const get = async (): Promise<ListSummaryResult> => {
 
-        const re = await axios.get<ListSummary[]>('api/lists')
+        const re = await axios.get<ListSummary[]>('api/lists', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
 
         return {
             data: re.data
