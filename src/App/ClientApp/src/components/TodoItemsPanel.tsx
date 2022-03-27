@@ -46,9 +46,9 @@ export function TodoItemsPanel({listName, onSetLoading}: ITodoItemsPanelProps) {
     const getFilteredTodos = () => {
         switch (filter) {
             case FilterMode.Outstanding:
-                return todoItems.filter(ti => ti.completedAt === null || undefined);
+                return todoItems.filter(ti => !ti.isComplete);
             case FilterMode.Done:
-                return todoItems.filter(ti => ti.completedAt !== undefined || undefined);
+                return todoItems.filter(ti => ti.isComplete);
             case FilterMode.All:
                 return todoItems;
         }
@@ -141,9 +141,15 @@ export function TodoItemsPanel({listName, onSetLoading}: ITodoItemsPanelProps) {
                 {fieldError}
             </div>
             <p className="panel-tabs">
-                <a className="is-active">Outstanding</a>
-                <a>Done</a>
-                <a>All</a>
+                <a
+                    onClick={() => setFilter(FilterMode.Outstanding)}
+                    className={filter === FilterMode.Outstanding ? 'is-active' : ''}>Outstanding</a>
+                <a
+                    onClick={() => setFilter(FilterMode.Done)}
+                    className={filter === FilterMode.Done ? 'is-active' : ''}>Done</a>
+                <a
+                    onClick={() => setFilter(FilterMode.All)}
+                    className={filter === FilterMode.All ? 'is-active' : ''}>All</a>
             </p>
             {todoBlocks()}
         </nav>

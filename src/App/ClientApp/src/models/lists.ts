@@ -14,4 +14,5 @@ export interface TodoItem {
     title: string;
     createdAt: string;
     completedAt?: string;
+    isComplete: boolean;
 }
