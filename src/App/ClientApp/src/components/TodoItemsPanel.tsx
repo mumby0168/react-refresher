@@ -38,7 +38,6 @@ export function TodoItemsPanel({listName, onSetLoading}: ITodoItemsPanelProps) {
                         if (r.data) {
                             setTodoItems(r.data);
                         }
-                        console.log(r.data);
                     });
             });
     };
@@ -133,9 +132,10 @@ export function TodoItemsPanel({listName, onSetLoading}: ITodoItemsPanelProps) {
                 </span>
                     </p>
                     <p className="control">
-                        <a onClick={newTodo} className="button is-light">
+                        <button onClick={newTodo}
+                                className="button is-light">
                             Create
-                        </a>
+                        </button>
                     </p>
                 </div>
                 {fieldError}
