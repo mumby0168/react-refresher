@@ -10,9 +10,9 @@ export function ITodoItemBlock({item, onComplete}: ITodoItemBlockProps) {
 
     const getDateTooltipText = () => {
         if (item.completedAt) {
-            return `Done: ${item.completedAt.toDateString()}`;
+            return `Done: ${new Date(item.completedAt).toDateString()}`;
         } else {
-            return `Created: ${item.createdAt.toDateString()}`;
+            return `Created: ${new Date(item.createdAt).toDateString()}`;
         }
     };
 

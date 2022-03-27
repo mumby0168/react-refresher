@@ -60,7 +60,7 @@ export function ListsPage() {
                 <hr/>
                 <ListsTabs onTabSelected={handleTitleChanged} summaries={summaries}/>
                 <TodoItemsPanel
-                    onLoading={(isLoading => setLoading(isLoading))}
+                    onSetLoading={(isLoading => setLoading(isLoading))}
                     listName={title}/>
             </div>
         </ProtectedPage>

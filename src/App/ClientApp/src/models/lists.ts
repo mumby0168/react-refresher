@@ -10,7 +10,8 @@ export interface List {
 }
 
 export interface TodoItem {
-    title: string
-    createdAt: Date
-    completedAt?: Date
+    id: string;
+    title: string;
+    createdAt: string;
+    completedAt?: string;
 }

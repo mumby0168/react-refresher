@@ -8,8 +8,6 @@ using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration);
@@ -50,6 +48,15 @@ app.UseAuthorization();
 app.MapGet("/api/lists", GetLists)
     .RequireAuthorization();
 
+app.MapGet("/api/lists/{listName}/items", GetTodoItems)
+    .RequireAuthorization();
+
+app.MapPost("/api/lists/{listName}/items", CreateTodoItem)
+    .RequireAuthorization();
+
+app.MapPut("/api/lists/{listName}/items/{itemId}/complete", CompleteTodo)
+    .RequireAuthorization();
+
 app.MapPost("/api/lists", CreateList)
     .RequireAuthorization();
 
@@ -76,6 +83,62 @@ async ValueTask<IResult> CreateList(
 
     var list = new TodoList(name, context.GetEmailAddress());
     await repository.CreateAsync(list);
+    return Results.Ok();
+}
+
+async ValueTask<IEnumerable<TodoItemDto>> GetTodoItems(
+    [FromRoute] string listName,
+    IReadOnlyRepository<TodoItem> repository)
+{
+    var items = await repository.GetAsync(x =>
+        x.Pk == listName);
+
+    return items.Select(x => new TodoItemDto(
+        x.Id,
+        x.Name,
+        x.CreatedTimeUtc!.Value,
+        x.CompletedAt,
+        x.IsComplete));
+}
+
+async ValueTask<IResult> CreateTodoItem(
+    [FromRoute] string listName,
+    [FromQuery] string title,
+    IWriteOnlyRepository<TodoItem> repository)
+{
+    if (string.IsNullOrWhiteSpace(listName) || string.IsNullOrWhiteSpace(title))
+    {
+        return Results.BadRequest(new {error = "Both a list name and a title must be provided"});
+    }
+
+    var item = new TodoItem(title, listName);
+    await repository.CreateAsync(item);
+
+    return Results.Ok();
+}
+
+async ValueTask<IResult> CompleteTodo(
+    [FromRoute] string listName,
+    [FromRoute] string itemId,
+    IRepository<TodoItem> repository)
+{
+    if (string.IsNullOrWhiteSpace(listName) || string.IsNullOrWhiteSpace(itemId))
+    {
+        return Results.BadRequest(new {error = "Both a list name and an item ID must be provided"});
+    }
+
+    var item = await repository.TryGetAsync(
+        itemId,
+        listName);
+
+    if (item is null)
+    {
+        return Results.NotFound();
+    }
+
+    item.CompletedAt = DateTime.UtcNow;
+    await repository.UpdateAsync(item);
+
     return Results.Ok();
 }
 

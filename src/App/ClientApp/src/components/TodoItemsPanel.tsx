@@ -1,10 +1,13 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {TodoItem} from '../models/lists';
 import {ITodoItemBlock} from './TodoItemBlock';
+import {getAPIAuthToken} from '../auth/msal';
+import {useMsal} from '@azure/msal-react';
+import {completeTodoItem, createNewTodoItem, fetchItemsForList} from '../api/apiFuncs';
 
 export interface ITodoItemsPanelProps {
     listName: string;
-    onLoading: (isLoading: boolean) => void;
+    onSetLoading: (isLoading: boolean) => void;
 }
 
 enum FilterMode {
@@ -13,47 +16,80 @@ enum FilterMode {
     All
 }
 
-const init: TodoItem[] = [
-    {
-        title: 'Item 1',
-        completedAt: undefined,
-        createdAt: new Date()
-    },
-    {
-        title: 'Item 2',
-        completedAt: undefined,
-        createdAt: new Date()
-    },
-    {
-        title: 'Item 3',
-        completedAt: undefined,
-        createdAt: new Date()
-    }
-];
 
+export function TodoItemsPanel({listName, onSetLoading}: ITodoItemsPanelProps) {
 
-export function TodoItemsPanel({listName}: ITodoItemsPanelProps) {
-
-    const [todoItems, setTodoItems] = useState<TodoItem[]>(init);
+    const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
     const [filter, setFilter] = useState(FilterMode.Outstanding);
+    const [newError, setNewError] = useState<string>('');
+    const [itemTitle, setNewItemTitle] = useState<string>('');
+    const context = useMsal();
 
-    //TODO: add a use effect here, with [listName] as a trigger for change.
-    //TODO: call API via re-usable method.
+    useEffect(() => getTodoItems(),
+        [listName]);
+
+    const getTodoItems = () => {
+        onSetLoading(true);
+        getAPIAuthToken(context)
+            .then((t: any) => {
+                fetchItemsForList(listName, t)
+                    .then((r) => {
+                        onSetLoading(false);
+                        if (r.data) {
+                            setTodoItems(r.data);
+                        }
+                        console.log(r.data);
+                    });
+            });
+    };
 
     const getFilteredTodos = () => {
         switch (filter) {
             case FilterMode.Outstanding:
-                return todoItems.filter(ti => ti.completedAt === undefined);
+                return todoItems.filter(ti => ti.completedAt === null || undefined);
             case FilterMode.Done:
-                return todoItems.filter(ti => ti.completedAt !== undefined);
+                return todoItems.filter(ti => ti.completedAt !== undefined || undefined);
             case FilterMode.All:
                 return todoItems;
         }
     };
 
     const completeTodo = (item: TodoItem) => {
-        //TODO: call API to complete, re-load items
-        console.log('calling api .....');
+        onSetLoading(true);
+        getAPIAuthToken(context)
+            .then((t: any) => {
+                completeTodoItem(listName, item.id, t)
+                    .then((r) => {
+                        onSetLoading(false);
+                        if (r !== null) {
+                            setNewError(r);
+                        } else {
+                            setNewItemTitle('');
+                            getTodoItems();
+                        }
+                    });
+            });
+    };
+
+    const newTodo = () => {
+        if (itemTitle === undefined || itemTitle === null || itemTitle === '') {
+            setNewError('You must provide a title');
+        }
+        setNewError('');
+        onSetLoading(true);
+        getAPIAuthToken(context)
+            .then((t: any) => {
+                createNewTodoItem(itemTitle, listName, t)
+                    .then((r) => {
+                        onSetLoading(false);
+                        if (r !== null) {
+                            setNewError(r);
+                        } else {
+                            setNewItemTitle('');
+                            getTodoItems();
+                        }
+                    });
+            });
     };
 
     const todoBlocks = () => {
@@ -71,18 +107,38 @@ export function TodoItemsPanel({listName}: ITodoItemsPanelProps) {
             <ITodoItemBlock item={ti} onComplete={completeTodo}/>);
     };
 
+    const fieldError = newError !== ''
+        ? <div className="field">
+            <p className="help is-danger">{newError} </p>
+        </div>
+        : <div/>;
+
     return (
         <nav className="panel">
             <p className="panel-heading">
                 {listName}
             </p>
-            <div className="panel-block">
-                <p className="control has-icons-left">
-                    <input className="input" type="text" placeholder="Search"/>
-                    <span className="icon is-left">
-                    <i className="fas fa-search" aria-hidden="true"/>
-                  </span>
-                </p>
+            <div className="panel-block is-block">
+                <div className="field has-addons w-100 mb-0">
+                    <p className="control is-flex-grow-1 has-icons-left">
+                        <input
+                            value={itemTitle}
+                            onChange={(e) => setNewItemTitle(e.currentTarget.value)}
+                            className="input"
+                            type="text"
+                            placeholder="New Todo Item"/>
+
+                        <span className="icon is-left">
+                <i className="fas fa-pencil" aria-hidden="true"/>
+                </span>
+                    </p>
+                    <p className="control">
+                        <a onClick={newTodo} className="button is-light">
+                            Create
+                        </a>
+                    </p>
+                </div>
+                {fieldError}
             </div>
             <p className="panel-tabs">
                 <a className="is-active">Outstanding</a>

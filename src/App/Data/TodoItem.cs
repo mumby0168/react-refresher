@@ -4,7 +4,10 @@ namespace App.Data;
 
 public class TodoItem : FullItem
 {
-    public TodoItem(string name, DateTime? completedAt, string listName)
+    public TodoItem(
+        string name,
+        string listName,
+        DateTime? completedAt = null)
     {
         Name = name;
         CompletedAt = completedAt;
