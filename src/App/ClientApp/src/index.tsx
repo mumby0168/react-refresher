@@ -1,5 +1,4 @@
 import 'bulma/css/bulma.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
 import ReactDOM from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';

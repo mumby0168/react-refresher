@@ -5,6 +5,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 
+# Install Node
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt-get install --assume-yes nodejs
+
 # Build Project
 COPY ./ ./
 RUN dotnet restore "TodoApp.sln"
