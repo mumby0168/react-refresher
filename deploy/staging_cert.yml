@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: dev-bemby-cloud-rtodo
+  namespace: default
+spec:
+  secretName: ssl-cert-staging-rtodo
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  commonName: rtodo.bemby.cloud
+  dnsNames:
+  - rtodo.bemby.cloud
+
+  # dial tcp: lookup rtodo.bemby.cloud on 10.128.0.10:53: no such host"
