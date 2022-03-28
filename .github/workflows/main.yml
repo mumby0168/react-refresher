@@ -34,7 +34,7 @@ jobs:
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-          $FULL_IMAGE=$IMAGE_ID:${{github.run_number}}
+          FULL_IMAGE=$IMAGE_ID:${{github.run_number}}
           docker build . -f src/App/Dockerfile -t $FULL_IMAGE
           docker push $FULL_IMAGE
           
