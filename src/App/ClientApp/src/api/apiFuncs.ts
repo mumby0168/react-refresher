@@ -39,6 +39,8 @@ export const fetchListSummaries = async (token: string): Promise<ListSummaryResu
 
 export const fetchItemsForList = async (listName: string, token: string): Promise<TodoItemsResults> => {
 
+    console.log(listName);
+
     const get = async (): Promise<TodoItemsResults> => {
         const re = await axios.get<TodoItem[]>(`api/lists/${listName}/items`, {
             headers: {
