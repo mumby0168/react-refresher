@@ -44,6 +44,10 @@ jobs:
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           docker buildx build . --platform linux/amd64,linux/arm64 -f src/App/Dockerfile -t $IMAGE_ID:latest --output type=image,push=true
 
+      - name: Apply Configuration
+        run: |
+          sed -i -e  "s@<COSMOS_CONN_STRING>@${{ secrets.COSMOS_CONN_STRING }}/@g" "deploy/config.yml"
+
       
       - name: Apply K8s
         run: |
