@@ -28,21 +28,16 @@ jobs:
       - name: Docker Login
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Docker
+      - name: Deploy
         run: |
           IMAGE=rtodo/app
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-          docker build . -f src/App/Dockerfile -t $IMAGE_ID:${{github.run_number}}
-          docker push $IMAGE_ID:${{github.run_number}}
-          export PUSHED_IMAGE=$IMAGE_ID:${{github.run_number}}
-
-      - name: Apply Configuration
-        run: |
+          $FULL_IMAGE=$IMAGE_ID:${{github.run_number}}
+          docker build . -f src/App/Dockerfile -t $FULL_IMAGE
+          docker push $FULL_IMAGE
+          
           sed -i -e  "s@<COSMOS_CONN_STRING>@${{ secrets.COSMOS_CONN_STRING }}@g" "deploy/config.yml"
-          sed -i -e  "s@ghcr.io/mumby0168/rtodo/app:latest@$PUSHED_IMAGE@g" "deploy/app.yml"
-      
-      - name: Apply K8s
-        run: |
+          sed -i -e  "s@ghcr.io/mumby0168/rtodo/app:latest@$FULL_IMAGE@g" "deploy/app.yml"
           kubectl apply -f ./deploy/
