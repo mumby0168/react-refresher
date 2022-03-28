@@ -29,6 +29,10 @@ export function TodoItemsPanel({listName, onSetLoading}: ITodoItemsPanelProps) {
         [listName]);
 
     const getTodoItems = () => {
+        if(listName === null || undefined || '') {
+            return;
+        }
+        
         onSetLoading(true);
         getAPIAuthToken(context)
             .then((t: any) => {
