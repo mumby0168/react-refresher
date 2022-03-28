@@ -7,11 +7,12 @@ public class TodoItem : FullItem
     public TodoItem(
         string name,
         string listName,
+        string email,
         DateTime? completedAt = null)
     {
         Name = name;
         CompletedAt = completedAt;
-        Pk = listName;
+        Pk = $"{email}_{listName}";
     }
 
     public string Name { get; set; }

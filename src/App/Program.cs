@@ -79,11 +79,12 @@ async ValueTask<IResult> CreateList(
 }
 
 async ValueTask<IEnumerable<TodoItemDto>> GetTodoItems(
+    HttpContext context,
     [FromRoute] string listName,
     IReadOnlyRepository<TodoItem> repository)
 {
     var items = await repository.GetAsync(x =>
-        x.Pk == listName);
+        x.Pk == $"{context.GetEmailAddress()}_{listName}");
 
     return items.Select(x => new TodoItemDto(
         x.Id,
@@ -94,6 +95,7 @@ async ValueTask<IEnumerable<TodoItemDto>> GetTodoItems(
 }
 
 async ValueTask<IResult> CreateTodoItem(
+    HttpContext context,
     [FromRoute] string listName,
     [FromQuery] string title,
     IWriteOnlyRepository<TodoItem> repository)
@@ -103,13 +105,14 @@ async ValueTask<IResult> CreateTodoItem(
         return Results.BadRequest(new {error = "Both a list name and a title must be provided"});
     }
 
-    var item = new TodoItem(title, listName);
+    var item = new TodoItem(title, listName, context.GetEmailAddress());
     await repository.CreateAsync(item);
 
     return Results.Ok();
 }
 
 async ValueTask<IResult> CompleteTodo(
+    HttpContext context,
     [FromRoute] string listName,
     [FromRoute] string itemId,
     IRepository<TodoItem> repository)
@@ -121,7 +124,7 @@ async ValueTask<IResult> CompleteTodo(
 
     var item = await repository.TryGetAsync(
         itemId,
-        listName);
+        $"{context.GetEmailAddress()}_{listName}");
 
     if (item is null)
     {
