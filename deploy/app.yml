@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: react-todo-app
-          image: docker/getting-started
+          image: github.io/mumby0168/rtodo/app
           ports:
             - containerPort: 80
           resources:
