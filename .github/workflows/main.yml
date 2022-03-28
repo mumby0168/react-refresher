@@ -40,8 +40,8 @@ jobs:
 
       - name: Apply Configuration
         run: |
-          sed -i -e  "s@<COSMOS_CONN_STRING>@${{ secrets.COSMOS_CONN_STRING }}/@g" "deploy/config.yml"
-          sed -i -e  "s@ghcr.io/mumby0168/rtodo/app:latest@$PUSHED_IMAGE/@g" "deploy/app.yml"
+          sed -i -e  "s@<COSMOS_CONN_STRING>@${{ secrets.COSMOS_CONN_STRING }}@g" "deploy/config.yml"
+          sed -i -e  "s@ghcr.io/mumby0168/rtodo/app:latest@$PUSHED_IMAGE@g" "deploy/app.yml"
       
       - name: Apply K8s
         run: |
