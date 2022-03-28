@@ -55,7 +55,7 @@ export const fetchItemsForList = async (listName: string, token: string): Promis
         };
     };
 
-    if (listName === undefined || listName === null || listName.length < 1) {
+    if (listName.length < 1) {
         return {
             error: 'no list name provided'
         };

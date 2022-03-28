@@ -14,7 +14,7 @@ const initSummaries: ListSummary[] = [];
 export function ListsPage() {
 
     const [summaries, setSummaries] = useState(initSummaries);
-    const [title, setTitle] = useState('');
+    const [title, setTitle] = useState('---');
     const [loading, setLoading] = useState(false);
     const context = useMsal();
 
