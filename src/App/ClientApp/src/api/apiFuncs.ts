@@ -16,8 +16,6 @@ export interface TodoItemsResults extends ApiResult<TodoItem[]> {
 export const fetchListSummaries = async (token: string): Promise<ListSummaryResult> => {
 
     const get = async (): Promise<ListSummaryResult> => {
-
-        console.log(token);
         const re = await axios.get<ListSummary[]>('api/lists', {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -42,8 +40,6 @@ export const fetchListSummaries = async (token: string): Promise<ListSummaryResu
 export const fetchItemsForList = async (listName: string, token: string): Promise<TodoItemsResults> => {
 
     const get = async (): Promise<TodoItemsResults> => {
-
-        console.log(token);
         const re = await axios.get<TodoItem[]>(`api/lists/${listName}/items`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -56,6 +52,12 @@ export const fetchItemsForList = async (listName: string, token: string): Promis
             data: re.data
         };
     };
+
+    if (listName === undefined || listName === null || listName.length < 1) {
+        return {
+            error: 'no list name provided'
+        };
+    }
 
     try {
         return await get();
@@ -70,8 +72,6 @@ export const fetchItemsForList = async (listName: string, token: string): Promis
 export const createNewList = async (name: string, token: string): Promise<string | null> => {
 
     const post = async (): Promise<string | null> => {
-
-        console.log(token);
         const re = await axios.post(`api/lists?name=${name}`, null, {
             headers: {
                 'Authorization': `Bearer ${token}`
