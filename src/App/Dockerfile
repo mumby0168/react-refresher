@@ -10,7 +10,7 @@ RUN apt-get install --assume-yes nodejs
 
 # Build Project
 COPY ./ ./
-RUN sed -i -e  "s@https://localhost:44489/@https://react-todo-app-6fylx.ondigitalocean.app/@g" "src/App/ClientApp/src/auth/msal.ts"
+RUN sed -i -e  "s@https://localhost:44489/@https://rtodo.bemby.cloud/@g" "src/App/ClientApp/src/auth/msal.ts"
 RUN dotnet restore "TodoApp.sln"
 
 WORKDIR "src/App"
