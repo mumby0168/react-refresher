@@ -14,9 +14,14 @@ spec:
       labels:
         app: react-todo-app
     spec:
+      imagePullSecrets:
+        - name: ghcr-creds
       containers:
         - name: react-todo-app
-          image: github.io/mumby0168/rtodo/app
+          image: ghcr.io/mumby0168/rtodo/app:latest
+          envFrom:
+          - configMapRef:
+              name: react-todo-app-config
           ports:
             - containerPort: 80
           resources:

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: react-todo-app-config
+  labels:
+    app: react-todo-app
+data:
+   RepositoryOptions__CosmosConnectionString: "<COSMOS_CONN_STRING>"
